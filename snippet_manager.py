@@ -1,85 +1,46 @@
-import os
-import json
+import java.util.*;
 
-class SnippetManager:
-    def __init__(self, db_file='snippets.json'):
-        self.db_file = db_file
-        self.snippets = self.load_snippets()
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
 
-    def load_snippets(self):
-        if os.path.exists(self.db_file):
-            with open(self.db_file, 'r') as file:
-                return json.load(file)
-        return {}
+        // Enable debug print statements
+        boolean showOperations = true;
 
-    def save_snippets(self):
-        with open(self.db_file, 'w') as file:
-            json.dump(self.snippets, file, indent=4)
+        int T = sc.nextInt(); // number of test cases
+        while (T-- > 0) {
+            int n = sc.nextInt(), k = sc.nextInt();
+            Set<Integer> seen = new HashSet<>();
+            Deque<Integer> dq = new ArrayDeque<>();
 
-    def add_snippet(self, title, language, category, code):
-        snippet = {
-            'title': title,
-            'language': language,
-            'category': category,
-            'code': code
+            System.out.println("Processing " + n + " elements, capacity = " + k);
+
+            for (int i = 0; i < n; i++) {
+                int x = sc.nextInt();
+                if (seen.contains(x)) {
+                    if (showOperations) System.out.println("Skip duplicate: " + x);
+                    continue;
+                }
+                if (dq.size() == k) {
+                    int removed = dq.removeLast();
+                    seen.remove(removed);
+                    if (showOperations) System.out.println("Removed oldest: " + removed);
+                }
+                dq.addFirst(x);
+                seen.add(x);
+                if (showOperations) System.out.println("Inserted: " + x);
+            }
+
+            System.out.println("Final size: " + dq.size());
+            System.out.print("Final elements (latest to oldest): ");
+            dq.forEach(e -> System.out.print(e + " "));
+            System.out.println();
+
+            System.out.print("Final elements (original insertion order): ");
+            List<Integer> originalOrder = new ArrayList<>(dq);
+            Collections.reverse(originalOrder);
+            originalOrder.forEach(e -> System.out.print(e + " "));
+            System.out.println("\n---");
         }
-        if language not in self.snippets:
-            self.snippets[language] = []
-        self.snippets[language].append(snippet)
-        self.save_snippets()
-        print(f"Snippet '{title}' added successfully!")
-
-    def search_snippets(self, query):
-        results = []
-        for language, snippets in self.snippets.items():
-            for snippet in snippets:
-                if query.lower() in snippet['title'].lower() or query.lower() in snippet['code'].lower():
-                    results.append(snippet)
-        return results
-
-    def list_snippets(self):
-        for language, snippets in self.snippets.items():
-            print(f"\nSnippets in {language}:")
-            for snippet in snippets:
-                print(f" - {snippet['title']} (Category: {snippet['category']})")
-
-def main():
-    manager = SnippetManager()
-
-    while True:
-        print("\nSmart Code Snippet Manager")
-        print("1. Add Snippet")
-        print("2. List Snippets")
-        print("3. Search Snippets")
-        print("4. Exit")
-        
-        choice = input("Choose an option: ")
-        
-        if choice == '1':
-            title = input("Enter snippet title: ")
-            language = input("Enter programming language: ")
-            category = input("Enter category (e.g., Algorithms, Web, etc.): ")
-            code = input("Enter code: ")
-            manager.add_snippet(title, language, category, code)
-        
-        elif choice == '2':
-            manager.list_snippets()
-        
-        elif choice == '3':
-            query = input("Enter search query (title or code): ")
-            results = manager.search_snippets(query)
-            if results:
-                for snippet in results:
-                    print(f"Title: {snippet['title']}, Language: {snippet['language']}, Category: {snippet['category']}")
-                    print(f"Code:\n{snippet['code']}\n")
-            else:
-                print("No results found.")
-        
-        elif choice == '4':
-            print("Exiting... Goodbye!")
-            break
-        else:
-            print("Invalid option! Try again.")
-
-if __name__ == "__main__":
-    main()
+    }
+}
