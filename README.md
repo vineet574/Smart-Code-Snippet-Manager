@@ -31,3 +31,16 @@ List Snippets: See all saved snippets categorized by language.
 
 Search Snippets: Search for a snippet by keyword (e.g., searching for "sorting").
 
+
+
+✅ New Features Added:
+✅ Support for multiple test cases.
+
+✅ Prints final set in reverse order (as in original order of appearance).
+
+✅ Handles duplicate values and shows removed elements.
+
+✅ Prints the operations performed (optional toggle).
+
+
+
